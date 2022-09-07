@@ -36,9 +36,9 @@ def main():
     parser.add_argument("--datatrans", dest="datatrans", action="store_true")
     args = parser.parse_args()
     
-    origin_data_path = 'data/shapenetcore/03001627' #* chair category
-    origin_trans_path = 'data/shapenetcore/rexchair' #* rex chair sub category
-    metadata_path = 'data/shapenetcore/03001627.csv'
+    origin_data_path = 'PointNetGPD/data/shapenetcore/03001627' #* chair category
+    origin_trans_path = 'PointNetGPD/data/shapenetcore/rexchair' #* rex chair sub category
+    metadata_path = 'PointNetGPD/data/shapenetcore/03001627.csv'
     
     #*needed parameter for convert obj to sdf 
     dim = 100
