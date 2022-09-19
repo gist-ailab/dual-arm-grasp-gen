@@ -35,13 +35,14 @@ def do_job(i):
     object_name = file_list_all[i].split("/")[-1]
     good_grasp = multiprocessing.Manager().list()
     p_set = [multiprocessing.Process(target=worker, args=(i, 100, 20, good_grasp)) for _ in
-             range(50)]  # grasp_amount per friction: 20*40
+             range(20)]  # grasp_amount per friction: 20*40
     [p.start() for p in p_set]
     [p.join() for p in p_set]
     good_grasp = list(good_grasp)
     if len(good_grasp) == 0:
         return
-    good_grasp_file_name = "./generated_grasps/{}_{}_{}".format(filename_prefix, str(object_name), str(len(good_grasp)))
+    # good_grasp_file_name = "./generated_grasps/{}_{}_{}".format(filename_prefix, str(object_name), str(len(good_grasp)))
+    good_grasp_file_name = "./generated_grasps/{}".format(str(object_name))
     with open(good_grasp_file_name + ".pickle", "wb") as f:
         pickle.dump(good_grasp, f)
 
@@ -72,9 +73,9 @@ def worker(i, sample_nums, grasp_amount, good_grasp):
     else:
         raise NameError("Can not support this sampler")
     print("Log: do job", i)
-    if os.path.exists(str(file_list_all[i]) + "/google_512k/nontextured.obj"):
-        of = ObjFile(str(file_list_all[i]) + "/google_512k/nontextured.obj")
-        sf = SdfFile(str(file_list_all[i]) + "/google_512k/nontextured.sdf")
+    if os.path.exists(str(file_list_all[i]) + "/watertight_model.obj"):
+        of = ObjFile(str(file_list_all[i]) + "/watertight_model.obj")
+        sf = SdfFile(str(file_list_all[i]) + "/watertight_model.sdf")
     else:
         print("can not find any obj or sdf file!")
         return
@@ -105,7 +106,7 @@ def worker(i, sample_nums, grasp_amount, good_grasp):
 
     good_count_perfect = np.zeros(len(fc_list))
     count = 0
-    minimum_grasp_per_fc = grasp_amount
+    minimum_grasp_per_fc = grasp_amount #* =20
     while np.sum(good_count_perfect < minimum_grasp_per_fc) != 0:
         grasps = ags.generate_grasps(obj, target_num_grasps=sample_nums, grasp_gen_mult=10,
                                      vis=False, random_approach_angle=True)
@@ -149,7 +150,8 @@ if __name__ == "__main__":
     else:
         filename_prefix = "default"
     pointnetgpd_dir = os.environ["PointNetGPD_FOLDER"]
-    file_dir = pointnetgpd_dir + "/PointNetGPD/data/ycb-tools/models/ycb"
+    # file_dir = pointnetgpd_dir + "/PointNetGPD/data/ycb-tools/models/ycb"
+    file_dir = pointnetgpd_dir + '/PointNetGPD/data/shapenetcore/rexchair'
     yaml_config = YamlConfig(pointnetgpd_dir + "/dex-net/test/config.yaml")
     gripper_name = "robotiq_85"
     gripper = RobotGripper.load(gripper_name, pointnetgpd_dir + "/dex-net/data/grippers")

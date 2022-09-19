@@ -33,12 +33,12 @@ check_pcd_grasp_points = False
 
 def open_npy_and_obj(name_to_open_):
     npy_m_ = np.load(name_to_open_)
-    file_dir = home_dir + "/PointNetGPD/data/ycb-tools/models/ycb/"
+    file_dir = home_dir + "/PointNetGPD/data/shapenetcore/rexchair/"
     object_name_ = name_to_open_.split("/")[-1][:-4]
-    ply_name_ = file_dir + object_name_ + "/google_512k/nontextured.ply"
+    ply_name_ = file_dir + object_name_ + "/watertight_model.ply"
     if not check_pcd_grasp_points:
-        of = ObjFile(file_dir + object_name_ + "/google_512k/nontextured.obj")
-        sf = SdfFile(file_dir + object_name_ + "/google_512k/nontextured.sdf")
+        of = ObjFile(file_dir + object_name_ + "/watertight_model.obj")
+        sf = SdfFile(file_dir + object_name_ + "/watertight_model.sdf")
         mesh = of.read()
         sdf = sf.read()
         obj_ = GraspableObject3D(sdf, mesh)
@@ -114,7 +114,9 @@ def display_grasps(grasp, graspable, color):
 
 
 def show_selected_grasps_with_color(m, ply_name_, title, obj_):
-    m_good = m[m[:, -2] <= 0.4]
+    print('m:', m[:,-2])
+    m_good = m[m[:, -2] <= 0.6]
+    print('m_good: ', m_good)
     m_good = m_good[np.random.choice(len(m_good), size=25, replace=True)]
     m_bad = m[m[:, -2] >= 1.8]
     m_bad = m_bad[np.random.choice(len(m_bad), size=25, replace=True)]
@@ -192,7 +194,7 @@ def get_grasp_points_num(m, obj_):
 
 
 if __name__ == "__main__":
-    npy_names = glob.glob(home_dir + "/PointNetGPD/data/ycb_grasp/train/*.npy")
+    npy_names = glob.glob(home_dir + "/dex-net/apps/generated_grasps/*.npy")
     npy_names.sort()
     for i in range(len(npy_names)):
         grasps_with_score, obj, ply_name, obj_name = open_npy_and_obj(npy_names[i])

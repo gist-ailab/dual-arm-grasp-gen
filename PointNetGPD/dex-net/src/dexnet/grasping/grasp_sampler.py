@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 # import os, IPython, sys
+
 import random
 import time
 import scipy.stats as stats
@@ -723,7 +724,7 @@ class AntipodalGraspSampler(GraspSampler):
 
         for k, x_surf in enumerate(shuffled_surface_points):
             # print("k:", k, "len(grasps):", len(grasps))
-            start_time = time.clock()
+            start_time = time.perf_counter()
 
             # perturb grasp for num samples
             for i in range(self.num_samples):
@@ -736,11 +737,11 @@ class AntipodalGraspSampler(GraspSampler):
                 cone_succeeded, cone1, n1 = c1.friction_cone(self.num_cone_faces, self.friction_coef)
                 if not cone_succeeded:
                     continue
-                cone_time = time.clock()
+                cone_time = time.perf_counter()
 
                 # sample grasp axes from friction cone
                 v_samples = self.sample_from_cone(n1, tx1, ty1, num_samples=1)
-                sample_time = time.clock()
+                sample_time = time.perf_counter()
 
                 for v in v_samples:
                     if vis:
